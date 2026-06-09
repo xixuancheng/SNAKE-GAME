@@ -1,5 +1,7 @@
 import pygame
 import random
+import json
+import os
 
 class Snake:
     def __init__(self, start_pos):
@@ -45,7 +47,19 @@ class Game:
         self.snake = Snake((width//2, height//2))
         self.food = self._new_food()
         self.score = 0
+        self.high_score = self._load_high_score()
         self.game_over = False
+
+    def _load_high_score(self):
+        if not os.path.exists("highscore.json"):
+            return 0
+        with open("highscore.json", "r") as f:
+            data = json.load(f)
+            return data.get("high_score", 0)
+
+    def _save_high_score(self):
+        with open("highscore.json", "w") as f:
+            json.dump({"high_score": self.high_score}, f)
 
     def _new_food(self):
         while True:
@@ -61,6 +75,9 @@ class Game:
     def _check_food(self):
         if tuple(self.snake.head()) == self.food:
             self.score += 1
+            if self.score > self.high_score:
+                self.high_score = self.score
+                self._save_high_score()
             self.snake.grow()
             self.food = self._new_food()
 
@@ -95,8 +112,13 @@ class Game:
             self.snake.draw(self.screen, self.block)
             pygame.draw.rect(self.screen, (255,0,0),
                              (self.food[0]*self.block, self.food[1]*self.block, self.block, self.block))
+
+            font = pygame.font.Font(None, 36)
+            text = font.render(f"Score: {self.score}  High: {self.high_score}", True, (255,255,255))
+            self.screen.blit(text, (10,10))
+
             pygame.display.flip()
-            self.clock.tick(5)   # 速度减半
+            self.clock.tick(5)
 
         pygame.quit()
 
