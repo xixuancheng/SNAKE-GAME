@@ -81,6 +81,14 @@ class Game:
             self.snake.grow()
             self.food = self._new_food()
 
+    def _game_over_screen(self):
+        font_big = pygame.font.Font(None, 72)
+        text = font_big.render("GAME OVER", True, (255,0,0))
+        rect = text.get_rect(center=(self.width*self.block//2, self.height*self.block//2))
+        self.screen.blit(text, rect)
+        pygame.display.flip()
+        pygame.time.wait(3000)
+
     def run(self):
         pygame.init()
         running = True
@@ -99,7 +107,8 @@ class Game:
                         self.snake.change_dir((1,0))
 
             if self.game_over:
-                pygame.quit()
+                self._game_over_screen()
+                running = False
                 break
 
             self.snake.move()
