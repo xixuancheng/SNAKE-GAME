@@ -96,7 +96,7 @@ class Game:
             pygame.draw.rect(self.screen, (255,0,0),
                              (self.food[0]*self.block, self.food[1]*self.block, self.block, self.block))
             pygame.display.flip()
-            self.clock.tick(10)   # 速度较快
+            self.clock.tick(5)   # 速度减半
 
         pygame.quit()
 
